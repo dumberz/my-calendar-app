@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+    <meta charset="UTF-8">
+    <title>일정 관리</title>
+
+    <!-- FullCalendar CSS -->
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.css" rel="stylesheet" />
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 800px;
+            margin: 40px auto;
+        }
+        h1 {
+            text-align: center;
+        }
+        form {
+            margin-bottom: 20px;
+        }
+        input, button {
+            padding: 8px;
+            margin: 4px 0;
+            width: 100%;
+            box-sizing: border-box;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            background: #f0f0f0;
+            margin-bottom: 10px;
+            padding: 10px;
+            border-radius: 5px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        a {
+            color: red;
+            text-decoration: none;
+            margin-left: 10px;
+        }
+        #calendar {
+            margin-top: 20px;
+        }
+        .calendar-image {
+            display: block;
+            margin: 0 auto 20px auto;
+            max-width: 200px;
+        }
+    </style>
+</head>
+<body>
+    <!-- 달력 이미지 -->
+    <img src="/static/calendar.png" alt="달력 이미지" class="calendar-image">
+
+    <h1>📅 일정 관리</h1>
+
+    <!-- 일정 추가 폼 -->
+    <form method="POST" action="/add">
+        <input type="text" name="item" placeholder="일정 내용" required>
+        <input type="datetime-local" name="date" required 
+               pattern="\d{4}-\d{2}-\d{2}T\d{2}:\d{2}" 
+               title="YYYY-MM-DDTHH:MM 형식으로 입력하세요 (예: 2025-05-07T13:00)">
+        <button type="submit">추가</button>
+    </form>
+
+    <ul>
+        {% for item in schedule %}
+        <li>
+            {{ item }}
+            <a href="/delete/{{ item }}">삭제</a>
+        </li>
+        {% endfor %}
+    </ul>
+
+    <!-- FullCalendar 달력 표시 -->
+    <div id="calendar"></div>
+
+    <!-- jQuery, FullCalendar JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/fullcalendar/3.2.0/fullcalendar.min.js"></script>
+
+    <script>
+        $(document).ready(function() {
+            $('#calendar').fullCalendar({
+                // 일정 추가
+                events: [
+                    {% for item in schedule %}
+                    {
+                        title: "{{ item.split(' | ')[1] }}",  // 일정 내용
+                        start: "{{ item.split(' | ')[0] }}",  // 일정 날짜
+                    },
+                    {% endfor %}
+                ],
+                editable: true,
+                droppable: true,
+                header: {
+                    left: 'prev,next today',
+                    center: 'title',
+                    right: 'month,agendaWeek,agendaDay'
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
