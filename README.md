@@ -5,3 +5,7 @@ git commit -m "달력 이미지 추가"
 git push origin main
 
 pip freeze > requirements.txt
+
+git add requirements.txt
+git commit -m "Add requirements.txt"
+git push origin main
